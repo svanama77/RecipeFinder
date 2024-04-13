@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "cockroachdb"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+
+// User entity to store user data
+model User {
+  id        String   @id @default(uuid())
+  username  String   @unique
+  email     String   @unique
+  password  String   // Hashed password
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Relationship with favorite recipes
+  favoriteRecipes FavoriteRecipe[]
+  
+  // Relationship with shopping lists
+  shoppingLists   ShoppingList[]
+}
+
+// Recipe entity to store recipe data fetched from the third-party API
+model Recipe {
+  id               String     @id @default(uuid())
+  externalApiId    String     @unique // ID from the third-party API
+  title            String
+  description      String?
+  instructions     String?
+  imageUrl         String?
+  servings         Int?
+  prepTime         Int?       // in minutes
+  cookTime         Int?       // in minutes
+  totalTime        Int?       // in minutes
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+  
+  // Relationship with users who have favorited this recipe
+  favoritedBy      FavoriteRecipe[]
+}
+
+// Join table for the many-to-many relationship between User and Recipe for favorite recipes
+model FavoriteRecipe {
+  id        String @id @default(uuid())
+  userId    String
+  recipeId  String
+  
+  // Relationship with the user who favorited this recipe
+  user      User   @relation(fields: [userId], references: [id])
+  
+  // Relationship with the recipe that is favorited
+  recipe    Recipe @relation(fields: [recipeId], references: [id])
+}
+
+// ShoppingList entity to store user's shopping lists
+model ShoppingList {
+  id          String     @id @default(uuid())
+  name        String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  // Relationship with user who owns this shopping list
+  owner       User       @relation(fields: [ownerId], references: [id])
+  ownerId     String
+  
+  // Relationship with items in the shopping list
+  items       ShoppingListItem[]
+}
+
+// ShoppingListItem entity to store items in a shopping list
+model ShoppingListItem {
+  id             String     @id @default(uuid())
+  name           String
+  quantity       Float
+  unit           String?
+  isChecked      Boolean    @default(false)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  
+  // Relationship with the shopping list this item belongs to
+  shoppingList   ShoppingList @relation(fields: [shoppingListId], references: [id])
+  shoppingListId String
+}
