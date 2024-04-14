@@ -39,7 +39,7 @@ const Home = () => {
   });
   useEffect(() => {
     fetch(
-      `https://api.edamam.com/api/recipes/v2?type=public&q=chicken&app_id=${import.meta.env.VITE_APP_ID}&app_key=${import.meta.env.VITE_APP_KEY}`
+      `https://api.edamam.com/api/recipes/v2?type=public&q=pizza&app_id=${import.meta.env.VITE_APP_ID}&app_key=${import.meta.env.VITE_APP_KEY}`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -56,14 +56,14 @@ const Home = () => {
             <Menu
               key={idx}
               label={item.recipe.label}
-              shareAs={item.recipe.shareAs}
-              source={item.recipe.source}
+              calories={item.recipe.calories}
+              cuisineType={item.recipe.cuisineType}
               imageUri={item.recipe.image}
             />
           ))}
         </div>
       )}
-      <p className="token-message">Here is your token:{localStorage.getItem("token")}</p>
+      <p className="token-message">token:{localStorage.getItem("token")}</p>
     </div>
   );
 };

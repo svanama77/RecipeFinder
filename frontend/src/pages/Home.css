@@ -1,4 +1,4 @@
-
+/* 
 .home-container {
     padding: 20px;
   }
@@ -14,5 +14,62 @@
     margin-top: 20px;
     font-size: 16px;
     font-weight: bold;
-    color: #007bff; /* blue color */
+    color: #007bff; 
+  } */
+
+ 
+.home-container {
+    padding: 20px;
   }
+  
+  .menu-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+  }
+  
+  .menu-item {
+    border: 1px solid #ccc;
+    border-radius: 5px; 
+    padding: 10px; 
+  }
+  
+  .menu-image {
+    width: 100%; 
+    height: auto;
+  }
+  
+  .menu-details {
+    margin-top: 10px;
+  }
+  
+  .menu-label {
+    font-size: 16px;
+    font-weight: bold;
+  }
+  
+  .menu-info {
+    font-size: 14px;
+  }
+
+  .token-message {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #007bff; 
+  } 
+ 
+  
+  .name {
+    color: #007bff;
+  }
+  
+  .calories {
+    color: #28a745; 
+  }
+  
+  .cuisine {
+    color: #dc3545; 
+  }
+  
+

@@ -53,7 +53,7 @@ const Login = () => {
     }).then(res=>res.json()).then((data) => {
         if(!data.errors) {
           localStorage.setItem('token', data.data.loginuser.token)
-          navigate('/')
+          navigate('/home')
         }
     })
     // Reset the form
