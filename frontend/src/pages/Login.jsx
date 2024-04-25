@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const Login = () => {
-//   return (
-//     <div>Login</div>
-//   )
-// }
-
-// export default Login
-
 import React, { useState } from 'react';
 import './Login.css'; // Import CSS file for styling
 import { useNavigate } from 'react-router-dom';
@@ -15,47 +5,57 @@ import { useNavigate } from 'react-router-dom';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [errorMessage, setErrorMessage] = useState('');
+  
   const navigate = useNavigate();
 
   const handleUsernameChange = (event) => {
     setUsername(event.target.value);
+    setErrorMessage('');
   };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
+    setErrorMessage('');
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle login logic here, e.g. send login request to server
-    console.log("Username:", username);
-    console.log("Password:", password);
-    fetch(`${import.meta.env.VITE_SERVER_URI}/graphql`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        query: `
-        mutation Mutation($username: String!, $password: String!) {
-            loginuser(username: $username, password: $password) {
-              token
-              user {
-                createdAt
-                email
-                id
+    
+    try {
+      const response = await fetch(`${import.meta.env.VITE_SERVER_URI}/graphql`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          query: `
+            mutation Mutation($username: String!, $password: String!) {
+              loginuser(username: $username, password: $password) {
+                token
+                user {
+                  createdAt
+                  email
+                  id
+                }
               }
-            }
-          }`,
-        variables: { username, password }
-       }),
-    }).then(res=>res.json()).then((data) => {
-        if(!data.errors) {
-          localStorage.setItem('token', data.data.loginuser.token)
-          navigate('/home')
-        }
-    })
+            }`,
+          variables: { username, password }
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (data.errors) {
+        throw new Error(data.errors[0].message);
+      } else {
+        localStorage.setItem('token', data.data.loginuser.token);
+        navigate('/home');
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
+
     // Reset the form
     setUsername('');
     setPassword('');
@@ -85,6 +85,7 @@ const Login = () => {
             required
           />
         </div>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <button type="submit" className="submit-btn">Login</button>
       </form>
     </div>
